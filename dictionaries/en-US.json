@@ -1,0 +1,134 @@
+{
+  "include": "포함",
+  "save": "저장",
+  "sell": "팔기",
+  "buy": "구매",
+  "new": "신규",
+  "max": "최대",
+  "tokenSelect": "토큰 선택",
+  "notEnoughETH": "ETH 부족",
+  "serviceAvailable": "Uniswap 사용 가능 국가",
+  "quoting": "견적을 마무리하는 중..",
+  "review": "검토",
+  "back": "뒤로",
+  "continue": "계속하다",
+  "moreDetail": "더 알아보기",
+  "showDetail": "자세히보기",
+  "hideDetail": "간략히보기",
+  "networkFee": {
+    "label": "네트워크 비용",
+    "desc": "이는 블록체인에서  트랜잭션을 처리하는 데 드는 비용입니다. Uniswap은 이러한 수수료의 일부를 받지 않습니다."
+  },
+  "feeRate": {
+    "label": "수수료",
+    "desc": "Uniswap에 대한 최고의 경험을 보장하기 위해 수수료가 적용되며 이미 이 견적에 포함되어 있습니다."
+  },
+  "maxSlipage": {
+    "label": "최대 슬리피지",
+    "desc": "가격이 더 이상 하락하면 트랜잭션이 취소됩니다. 다음은 귀하가 받을 수 있는 최소 금액입니다."
+  },
+  "priceEffect": {
+    "label": "가격 영향",
+    "desc": "당신의 거래가 이 풀의 시장 가격에 미치는 영향"
+  },
+  "checkOnWallet": "지갑에서 확인",
+  "rate": "비율",
+  "predictionTime": "예상 시간",
+  "orderRouting": {
+    "label": "주문 라우팅",
+    "desc": "이 스왑은 안전성, 빠른 실행, 낮은 가격을 우선시하면서 네트워크 전반에서 자산을 이동하는 분산형 프로토콜인 Across를 통해 라우팅됩니다."
+  },
+  "second": "초",
+  "minute": "분",
+  "Swaping": "당신은 스왑중입니다.",
+  "neverShowAgain": "다시 표시하지 않음",
+  "swapBetweenNetwork": {
+    "label": "네트워크 간 스와핑",
+    "from": "에서",
+    "to": "(으)로",
+    "swap": "스왑합니다.",
+    "remain": "이를 \"브리징\"이라고도 하며, 토큰을 한 네트워크에서 다른 네트워크로 옮깁니다."
+  },
+  "tokenSelectModal": {
+    "label": "토큰을 선택하세요.",
+    "recent": "최근 검색어",
+    "dayVolume": "24시간 거래량 기준 토큰",
+    "allNetwork": "모든 네트워크",
+    "swapBetweenNetwork": "네트워크 간 스왑",
+    "yourToken": "당신의 토큰"
+  },
+  "header": {
+    "menu": {
+      "company": {
+        "label": "회사",
+        "recruit": "채용",
+        "blog": "블로그"
+      },
+      "protocol": {
+        "label": "프로토콜",
+        "vote": "투표",
+        "governance": "거버넌스",
+        "developer": "개발자"
+      },
+      "needHelp": {
+        "label": "도움이 필요하십니까?",
+        "helpCenter": "고객 센터",
+        "contact": "문의하기"
+      },
+      "appCta": {
+        "title": "Uniswap 다운로드",
+        "desc": "iOS 및 Android에서 사용 가능"
+      }
+    },
+    "nav": {
+      "trade": {
+        "label": "거래",
+        "swap": "스왑",
+        "limit": "지정가 주문",
+        "send": "보내기",
+        "buy": "구입하다"
+      },
+      "explore": {
+        "label": "탐색",
+        "token": "토큰",
+        "pool": "풀",
+        "transaction": "트랜잭션"
+      },
+      "pool": {
+        "label": "풀",
+        "view": "포지션 보기",
+        "create": "포지션 생성"
+      },
+      "lang": {
+        "label": "글로벌 선호도",
+        "theme": "테마",
+        "language": "언어",
+        "currency": "통화",
+        "english": "영어",
+        "korean": "한국어"
+      },
+      "connect": "연결"
+    }
+  },
+  "swap": {
+    "maxSlipage": {
+      "label": "최대 슬리피지",
+      "desc": "가격이 슬리피지 비율 이상으로 변동하면 트랜잭션이 취소됩니다."
+    },
+    "transaction": {
+      "label": "트랜잭션 기한",
+      "desc": "이 기간 이상 보류 중인 경우(최대 3일) 트랜잭션이 원래대로 돌아갑니다."
+    },
+    "option": {
+      "label": "거래 옵션",
+      "basic": {
+        "label": "기본",
+        "desc": "이 옵션을 선택하면 스왑에 가장 효율적인 경로를 찾습니다.",
+        "info": "경로는 추정된 가격 영향 및 네트워크 비용을 반영하고 v2, v3 및 일부 v4 풀을 고려하여 찾습니다.",
+        "v4": "v4 풀",
+        "v3": "v3 풀",
+        "v2": "v2 풀"
+      }
+    }
+  }
+}

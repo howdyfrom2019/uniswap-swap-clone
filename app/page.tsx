@@ -1,11 +1,17 @@
+import { getDictionary } from "@/app/dictionaries";
 import { Button } from "@heroui/react";
-
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ lng: string }>;
+}) {
+  const lang = (await searchParams).lng as "en-US" | "ko-KR";
+  const dict = await getDictionary(lang);
   return (
     <div>
-      hello
+      hell
       <Button color={"secondary"} className={"text-primary"}>
-        지갑 연결
+        {dict.header.nav.connect}
       </Button>
     </div>
   );
