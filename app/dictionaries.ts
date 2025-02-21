@@ -1,11 +1,10 @@
+import { dictionaries } from "@/lib/configs/dictionary-config";
+import { headers } from "next/headers";
 import "server-only";
 
-const dictionaries = {
-  ["ko-KR"]: () =>
-    import("@/dictionaries/ko-KR.json").then((module) => module.default),
-  ["en-US"]: () =>
-    import("@/dictionaries/en-US.json").then((module) => module.default),
-};
+export const getDictionary = async () => {
+  const headerList = await headers();
+  const locale = (headerList.get("x-locale") || "en-US") as "ko-KR" | "en-US";
 
-export const getDictionary = async (locale: "en-US" | "ko-KR") =>
-  dictionaries[locale]();
+  return dictionaries[locale]();
+};

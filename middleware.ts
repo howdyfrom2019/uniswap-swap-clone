@@ -30,7 +30,10 @@ export function middleware(request: NextRequest) {
 
   const locale = getLocale(request);
   searchParams.set("lng", locale);
-  return NextResponse.rewrite(request.nextUrl);
+
+  const response = NextResponse.rewrite(request.nextUrl);
+  response.headers.set("x-Locale", locale);
+  return response;
 }
 
 export const config = {

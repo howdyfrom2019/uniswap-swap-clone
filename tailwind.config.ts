@@ -15,6 +15,18 @@ export default {
         primary: "#FC72FF",
         default: "#FC72FF",
         secondary: "#FEF4FF",
+        neutral1: {
+          DEFAULT: "#222222",
+          hover: "#131313",
+        },
+        neutral2: {
+          DEFAULT: "#7d7d7d",
+          hover: "#6b6b6b",
+        },
+        neutral3: {
+          DEFAULT: "#bfbfbf",
+          hover: "#adadad",
+        },
       },
     },
   },
