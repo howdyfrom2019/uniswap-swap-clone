@@ -4,3 +4,5 @@ export const dictionaries = {
   ["en-US"]: () =>
     import("@/dictionaries/en-US.json").then((module) => module.default),
 };
+
+export type Dictionary = Awaited<ReturnType<(typeof dictionaries)["ko-KR"]>>;

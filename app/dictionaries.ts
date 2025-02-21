@@ -1,6 +1,5 @@
 import { dictionaries } from "@/lib/configs/dictionary-config";
 import { headers } from "next/headers";
-import "server-only";
 
 export const getDictionary = async () => {
   const headerList = await headers();

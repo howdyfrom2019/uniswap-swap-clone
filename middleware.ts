@@ -2,7 +2,6 @@ import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
 import { NextRequest, NextResponse } from "next/server";
 
-// const header = {};
 let locales = ["en-US", "ko-KR"];
 const defaultLocale = "en-US";
 
@@ -26,7 +25,11 @@ export function middleware(request: NextRequest) {
   const lng = searchParams.get("lng");
   const explicitlyWrittenLocale = locales.some((locale) => lng === locale);
 
-  if (explicitlyWrittenLocale) return NextResponse.next();
+  if (explicitlyWrittenLocale) {
+    const response = NextResponse.next();
+    response.headers.set("x-Locale", lng!);
+    return response;
+  }
 
   const locale = getLocale(request);
   searchParams.set("lng", locale);
