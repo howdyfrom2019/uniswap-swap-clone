@@ -87,7 +87,9 @@ export default async function Header() {
           <Icons.moreItems />
         </button>
         <Button
-          className={"min-w-0 px-3 font-bold text-primary rounded-full"}
+          className={
+            "min-w-0 px-3 font-bold text-primary rounded-full hover:bg-[#FCE9FB]"
+          }
           color={"secondary"}
         >
           {dict.header.nav.connect}

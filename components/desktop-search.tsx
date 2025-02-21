@@ -1,10 +1,10 @@
 "use client";
 
 import { Icons } from "@/components/icons";
-import { useLocale } from "@/hooks/use-locale";
+import { useDictionary } from "@/hooks/use-dictionary";
 
 export default function DesktopSearch() {
-  const locale = useLocale();
+  const { locale } = useDictionary();
 
   return (
     <div
