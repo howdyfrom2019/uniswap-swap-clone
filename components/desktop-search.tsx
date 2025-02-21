@@ -1,8 +1,11 @@
 "use client";
 
 import { Icons } from "@/components/icons";
+import { useLocale } from "@/hooks/use-locale";
 
 export default function DesktopSearch() {
+  const locale = useLocale();
+
   return (
     <div
       className={
@@ -11,7 +14,7 @@ export default function DesktopSearch() {
     >
       <Icons.search className={"mx-2"} />
       <input
-        placeholder={"토큰 검색"}
+        placeholder={locale === "ko-KR" ? "토큰 검색" : "Search a token"}
         className={
           "bg-transparent border-none outline-none placeholder:font-medium placeholder:tracking-tight"
         }
