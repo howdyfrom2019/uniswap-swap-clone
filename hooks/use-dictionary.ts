@@ -14,7 +14,6 @@ export function useDictionary() {
   const [lng, setLng] = useState<LangType>("en-US");
 
   const updateDictionary = async (lang: LangType) => {
-    console.log(lang);
     const dict = await dictionaries[lang]();
     setDict(dict);
   };

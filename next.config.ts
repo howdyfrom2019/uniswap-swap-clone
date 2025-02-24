@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         hostname: "raw.githubusercontent.com",
         protocol: "https",
       },
+      {
+        hostname: "app.uniswap.org",
+        protocol: "https",
+      },
     ],
   },
 };

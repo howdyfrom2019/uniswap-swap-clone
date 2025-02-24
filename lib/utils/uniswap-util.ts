@@ -1,9 +1,13 @@
 import {
+  ETH_TOKEN,
   SUPPORTED_CHAIN_IDS,
+  SUPPORTED_CHAINS_WITH_ALL_NETWORK,
   SUPPORTED_TOKENS,
 } from "@/lib/configs/uniswap-config";
+import { cn } from "@/lib/utils/tailwind-util";
 import defaultTokenList from "@uniswap/default-token-list";
 import type { TokenList } from "@uniswap/token-lists";
+import React from "react";
 import * as EVMNetwork from "viem/chains";
 
 interface TokenInfo {
@@ -14,14 +18,6 @@ interface TokenInfo {
   decimals: number;
   logoURI?: string;
 }
-
-const ETH_TOKEN = {
-  name: "Ethereum",
-  symbol: "ETH",
-  address: "",
-  decimals: 18,
-  logoURI: "https://token-icons.s3.amazonaws.com/eth.png",
-};
 
 export function getSupportedTokenByNetwork(chainId?: number) {
   const cache = new Map<number, TokenInfo[]>();
@@ -45,7 +41,7 @@ export function getSupportedTokenByNetwork(chainId?: number) {
       };
 
       if (!cache.has(token.chainId)) {
-        cache.set(token.chainId, []);
+        cache.set(token.chainId, [{ ...ETH_TOKEN, chainId: token.chainId }]);
       }
 
       cache.get(token.chainId)!.push(tokenInfo);
@@ -53,11 +49,28 @@ export function getSupportedTokenByNetwork(chainId?: number) {
   }
 
   return (function () {
-    console.log(cache);
     if (chainId) {
       return cache.get(chainId)!;
     }
 
     return cache.get(EVMNetwork.mainnet.id)!;
   })();
+}
+
+export function renderNetworkIcon({
+  className,
+  chainId,
+}: {
+  className?: string;
+  chainId: number;
+}) {
+  const el = SUPPORTED_CHAINS_WITH_ALL_NETWORK.find(
+    (chain) => chain.id === chainId
+  )?.icon;
+
+  return React.isValidElement<HTMLImageElement>(el)
+    ? React.cloneElement(el, {
+        className: cn(el?.props.className, className),
+      })
+    : el;
 }

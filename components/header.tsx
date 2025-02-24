@@ -7,6 +7,7 @@ import Link from "next/link";
 
 export default async function Header() {
   const dict = await getDictionary();
+
   const NAVIGATION_MENU = [
     {
       label: dict.header.nav.trade.label,

@@ -17,7 +17,20 @@ import {
 } from "viem/chains";
 
 type ChainWithLogo = Chain & { icon: React.ReactNode };
+
 export const SUPPORTED_TOKENS = ["ETH", "WBTC", "USDC"];
+
+export const ALL_NETWORKS_ICON_SRC =
+  "https://app.uniswap.org/static/media/all-networks-icon-unichain.b42e80b89a880a7be763.png";
+
+export const ETH_TOKEN = {
+  name: "Ethereum",
+  symbol: "ETH",
+  address: "",
+  decimals: 18,
+  logoURI: "https://token-icons.s3.amazonaws.com/eth.png",
+};
+
 export const SUPPORTED_CHAINS: ChainWithLogo[] = [
   {
     ...mainnet,
@@ -191,3 +204,30 @@ export const SUPPORTED_CHAINS: ChainWithLogo[] = [
 ];
 
 export const SUPPORTED_CHAIN_IDS = SUPPORTED_CHAINS.map((v) => v.id);
+export const SUPPORTED_CHAINS_WITH_ALL_NETWORK: {
+  id: number | null;
+  icon: React.ReactNode;
+  label?: string;
+}[] = [
+  {
+    id: null,
+    icon: (
+      <Image
+        src={ALL_NETWORKS_ICON_SRC}
+        draggable={false}
+        alt={"zksync"}
+        className={"size-6 rounded-lg"}
+        width={24}
+        height={24}
+      />
+    ),
+  },
+  ...SUPPORTED_CHAINS.map<{
+    id: number | null;
+    icon: React.ReactNode;
+  }>((v) => ({
+    id: v.id,
+    icon: v.icon,
+    label: v.name,
+  })),
+];
