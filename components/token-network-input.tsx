@@ -2,20 +2,28 @@
 
 import TokenSelectModal from "@/components/token-select-modal";
 import { cn } from "@/lib/utils/tailwind-util";
-import { ComponentPropsWithoutRef, useRef, useState } from "react";
+import { TokenInfo } from "@uniswap/token-lists";
+import { ComponentPropsWithoutRef, useEffect, useRef } from "react";
+
+export interface TokenNetworkSelectData {
+  amount: number;
+  token: TokenInfo;
+}
 
 interface Props extends ComponentPropsWithoutRef<"input"> {
+  isFocusing: boolean;
   schemaType: "from" | "to";
   label: string;
-  selectedTokenNetwork?: string | null;
-  onSelectedTokenNetwork?: () => void;
+  selectedTokenNetwork?: TokenNetworkSelectData;
+  onChangeTokenNetwork: (data: Partial<TokenNetworkSelectData>) => void;
 }
 
 export default function TokenNetworkInput({
+  isFocusing,
   schemaType,
   label,
   selectedTokenNetwork,
-  onSelectedTokenNetwork,
+  onChangeTokenNetwork,
   disabled,
   placeholder,
   className,
@@ -24,41 +32,48 @@ export default function TokenNetworkInput({
   ...props
 }: Props) {
   const numberRegex = /^\d*\.?\d*$/;
-  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const tokenSelectBtnRef = useRef<HTMLButtonElement>(null);
-  const canOpenModalWithButtonRole = !isModalOpened && !selectedTokenNetwork;
+  const hasDefaultValue = selectedTokenNetwork?.token?.symbol;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isFocusing) {
+      inputRef.current?.focus();
+    }
+  }, [isFocusing, inputRef.current]);
 
   return (
     <div
       className={cn([
         "flex flex-col items-stretch p-4 rounded-[20px] border border-[rgba(34,34,34,0.05)]",
-        canOpenModalWithButtonRole && "bg-[#f9f9f9]",
+        !hasDefaultValue && "bg-[#f9f9f9]",
+        isFocusing && "bg-none",
       ])}
-      role={!selectedTokenNetwork ? "button" : undefined}
+      role={!hasDefaultValue ? "button" : undefined}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (canOpenModalWithButtonRole) {
+        if (!hasDefaultValue) {
           tokenSelectBtnRef?.current?.click();
         }
       }}
     >
       <p className={"text-neutral2"}>{label}</p>
-      <div className={"flex items-center py-2"}>
+      <div className={"flex items-center py-2 justify-between"}>
         <p
           className={cn([
             "text-neutral3 min-h-[43.199999999999996px] text-4xl font-medium w-full max-w-[314.02px]",
-            selectedTokenNetwork && "hidden",
+            hasDefaultValue && "hidden",
           ])}
         >
           0
         </p>
         <input
-          disabled={!selectedTokenNetwork || disabled}
+          disabled={!hasDefaultValue || disabled}
           placeholder={placeholder || "0"}
           className={cn([
             "bg-inherit outline-none placehoder:text-neutral3 min-h-[43.199999999999996px] text-4xl font-medium w-full max-w-[314.02px]",
-            !selectedTokenNetwork && "hidden",
+            !hasDefaultValue && "hidden",
             className,
           ])}
           pattern={"^d*.?d*$"}
@@ -68,11 +83,19 @@ export default function TokenNetworkInput({
             }
             onInput?.(e);
           }}
+          ref={inputRef}
           {...props}
         />
         <TokenSelectModal
           type={schemaType}
-          onChangeOpenState={setIsModalOpened}
+          onChangeTokenSelect={(token) => {
+            if (!inputRef.current) return;
+            onChangeTokenNetwork({
+              token,
+              amount: parseFloat(inputRef.current.value),
+            });
+          }}
+          token={selectedTokenNetwork?.token}
           ref={tokenSelectBtnRef}
         />
       </div>

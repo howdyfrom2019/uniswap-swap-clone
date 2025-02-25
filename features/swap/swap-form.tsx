@@ -1,13 +1,54 @@
 "use client";
 
 import { Icons } from "@/components/icons";
-import TokenNetworkInput from "@/components/token-network-input";
+import TokenNetworkInput, {
+  TokenNetworkSelectData,
+} from "@/components/token-network-input";
 import SwapConfig from "@/features/swap/swap-config";
 import { useDictionary } from "@/hooks/use-dictionary";
+import { ETH_TOKEN } from "@/lib/configs/uniswap-config";
 import { cn } from "@/lib/utils/tailwind-util";
+import { Button } from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const schema = z.object({
+  fromToken: z.object({
+    address: z.string().min(0),
+    chainId: z.coerce.number(),
+    decimals: z.coerce.number(),
+    logoURI: z.string().optional(),
+    name: z.string(),
+    symbol: z.string(),
+  }),
+  toToken: z.object({
+    address: z.string().min(0),
+    chainId: z.coerce.number(),
+    decimals: z.coerce.number(),
+    logoURI: z.string().optional(),
+    name: z.string(),
+    symbol: z.string(),
+  }),
+  fromAmount: z.coerce.number(),
+  toAmount: z.coerce.number(),
+  isUpperFocus: z.boolean(),
+});
+
+type FormData = z.infer<typeof schema>;
 
 export default function SwapForm() {
+  const form = useForm<FormData>({
+    defaultValues: {
+      fromToken: {
+        ...ETH_TOKEN,
+        chainId: 1,
+      },
+      isUpperFocus: true,
+    },
+    resolver: zodResolver(schema),
+  });
   const { dict } = useDictionary();
   if (!dict) return null;
 
@@ -17,6 +58,46 @@ export default function SwapForm() {
     { label: dict.header.nav.trade.send, href: "/send" },
     { label: dict.header.nav.trade.buy, href: "/buy" },
   ];
+
+  const onSubmit = (formData: FormData) => {};
+
+  const switchFromToTicker = () => {
+    const fromToken = { ...form.watch("fromToken") };
+    const toToken = { ...form.watch("toToken") };
+    const fromAmount = form.watch("fromAmount");
+    const toAmount = form.watch("toAmount");
+
+    form.setValue("fromToken", toToken);
+    form.setValue("toToken", fromToken);
+    form.setValue("fromAmount", toAmount);
+    form.setValue("toAmount", fromAmount);
+  };
+
+  const handleOnChangeTokenNetwork = (
+    type: "from" | "to",
+    data: Partial<TokenNetworkSelectData>
+  ) => {
+    const { amount, token } = data;
+    const pairTokenSpec = form.watch(type === "from" ? "toToken" : "fromToken");
+
+    if (
+      pairTokenSpec &&
+      token?.address === pairTokenSpec.address &&
+      token?.chainId === pairTokenSpec.chainId &&
+      token?.name === pairTokenSpec.name
+    ) {
+      switchFromToTicker();
+      return;
+    }
+
+    if (token) {
+      form.setValue(`${type}Token`, token);
+    }
+
+    if (amount) {
+      form.setValue(`${type}Amount`, amount);
+    }
+  };
 
   return (
     <div className={"flex flex-col items-stretch gap-0.5"}>
@@ -38,17 +119,67 @@ export default function SwapForm() {
         </div>
         <SwapConfig />
       </div>
-      <div className={"relative flex flex-col items-stretch gap-0.5"}>
-        <TokenNetworkInput schemaType={"from"} label={dict.sell} />
-        <TokenNetworkInput schemaType={"to"} label={dict.buy} />
-        <button
-          className={
-            "rounded-2xl bg-[#f9f9f9] p-2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-[2px] border-white"
-          }
+      <form
+        className={"flex flex-col items-stretch gap-0.5"}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div className={"flex flex-col items-stretch gap-0.5 relative"}>
+          <TokenNetworkInput
+            isFocusing={Boolean(form.watch("isUpperFocus"))}
+            schemaType={"from"}
+            label={dict.sell}
+            selectedTokenNetwork={{
+              token: form.watch("fromToken"),
+              amount: form.watch("fromAmount"),
+            }}
+            onChangeTokenNetwork={(data) => {
+              handleOnChangeTokenNetwork("from", data);
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              if (Boolean(form.watch("fromToken").chainId)) {
+                form.setValue("isUpperFocus", true);
+              }
+            }}
+          />
+          <TokenNetworkInput
+            isFocusing={!Boolean(form.watch("isUpperFocus"))}
+            schemaType={"to"}
+            label={dict.buy}
+            selectedTokenNetwork={{
+              token: form.watch("toToken"),
+              amount: form.watch("toAmount"),
+            }}
+            onChangeTokenNetwork={(data) => {
+              handleOnChangeTokenNetwork("to", data);
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              if (Boolean(form.watch("toToken").chainId)) {
+                form.setValue("isUpperFocus", false);
+              }
+            }}
+          />
+          <button
+            className={
+              "rounded-2xl bg-[#f9f9f9] p-2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-[2px] border-white"
+            }
+            onClick={(e) => {
+              e.preventDefault();
+              switchFromToTicker();
+            }}
+          >
+            <Icons.arrowDown />
+          </button>
+        </div>
+        <Button
+          color={"secondary"}
+          size={"lg"}
+          className={"text-primary font-semibold text-lg mt-1"}
         >
-          <Icons.arrowDown />
-        </button>
-      </div>
+          {dict.connectWallet}
+        </Button>
+      </form>
     </div>
   );
 }
