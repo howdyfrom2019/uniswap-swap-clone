@@ -14,6 +14,10 @@ export function useDictionary(initialDict?: Dictionary) {
   const [lng, setLng] = useState<LangType>("en-US");
   const [dict, setDict] = useState<Dictionary | null>(initialDict ?? null);
 
+  const isLangType = (payload: any): payload is LangType => {
+    return ["ko-KR", "en-US"].includes(payload);
+  };
+
   const updateDictionary = async (lang: LangType) => {
     const dict = await dictionaries[lang]();
     setDict(dict);
@@ -31,10 +35,17 @@ export function useDictionary(initialDict?: Dictionary) {
       localStorage.setItem(LANGUAGE_KEY, locale);
       updateDictionary(locale);
       setLng(locale);
-    } else {
-      updateDictionary(storedLng);
-      setLng(storedLng as LangType);
+      return;
     }
+
+    if (isLangType(lngParams) && storedLng !== lngParams) {
+      setLng(lngParams);
+      updateDictionary(lngParams);
+      return;
+    }
+
+    updateDictionary(storedLng);
+    setLng(storedLng as LangType);
   };
 
   useEffect(() => {

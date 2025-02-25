@@ -31,6 +31,7 @@
     "label": "가격 영향",
     "desc": "당신의 거래가 이 풀의 시장 가격에 미치는 영향"
   },
+  "connectWallet": "지갑 연결",
   "checkOnWallet": "지갑에서 확인",
   "rate": "비율",
   "predictionTime": "예상 시간",

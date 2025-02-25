@@ -31,6 +31,7 @@
     "label": "Price impact",
     "desc": "The impact your trade has on the market price of this pool."
   },
+  "connectWallet": "Connect wallet",
   "checkOnWallet": "Confirm in wallet",
   "rate": "Rate",
   "predictionTime": "예상 시간",
