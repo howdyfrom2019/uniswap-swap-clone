@@ -4,6 +4,7 @@ import { Icons } from "@/components/icons";
 import NetworkPopover from "@/components/network-popover";
 import { useDictionary } from "@/hooks/use-dictionary";
 import useTokenByNetwork from "@/hooks/use-token-by-network";
+import useUserBehaviour from "@/hooks/use-user-behaviour";
 import { toHashOmitString } from "@/lib/utils/hash-util";
 import { cn } from "@/lib/utils/tailwind-util";
 import { renderNetworkIcon } from "@/lib/utils/uniswap-util";
@@ -16,6 +17,7 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@heroui/react";
+import { TokenInfo } from "@uniswap/token-lists";
 import { forwardRef, useEffect, useState } from "react";
 
 interface Props {
@@ -23,16 +25,82 @@ interface Props {
   onChangeOpenState: (isOpen: boolean) => void;
 }
 
+interface NetworkSearchParams {
+  query: string;
+  chainId: number | null;
+}
+
+const TokenWithNetworkSpecButton = ({
+  token,
+  networkSearchParams,
+  onClick,
+}: {
+  token: TokenInfo;
+  networkSearchParams: NetworkSearchParams;
+  onClick?: (token: TokenInfo) => void;
+}) => {
+  return (
+    <button
+      className={
+        "flex items-center gap-3 px-4 py-3 hover:bg-[rgba(134,134,134,0.05)] text-start"
+      }
+      onClick={(e) => {
+        e.preventDefault();
+        onClick?.(token);
+      }}
+      key={token.chainId + token.symbol}
+    >
+      <div className={"relative size-10"}>
+        <Avatar className={"bg-zinc-300"} src={token.logoURI} />
+        {networkSearchParams.chainId && networkSearchParams.chainId > 1 && (
+          <div className={"absolute right-0 bottom-0 size-[18px]"}>
+            {renderNetworkIcon({
+              chainId: networkSearchParams.chainId,
+              className: "size-[18px] rounded-md border border-white",
+            })}
+          </div>
+        )}
+      </div>
+      <dl className={"flex flex-col"}>
+        <dt className={"font-medium"}>{token.name}</dt>
+        <dd>
+          <div className={"flex items-center gap-2"}>
+            <p
+              className={
+                "text-sm text-neutral2 tracking-tight font-medium text-ellipsis w-full max-w-[48px]"
+              }
+            >
+              {token.symbol}
+            </p>
+            <p className={"text-sm text-neutral3 text-ellipsis tracking-tight"}>
+              {toHashOmitString(token.address)}
+            </p>
+          </div>
+        </dd>
+      </dl>
+    </button>
+  );
+};
+
 const TokenSelectModal = forwardRef<HTMLButtonElement, Props>(
   ({ type, onChangeOpenState }, ref) => {
-    const [networkSearchParams, setNetworkSearchParams] = useState({
-      query: "",
-      chainId: type === "from" ? 1 : null,
-    });
+    const [networkSearchParams, setNetworkSearchParams] =
+      useState<NetworkSearchParams>({
+        query: "",
+        chainId: type === "from" ? 1 : null,
+      });
     const { dict, locale } = useDictionary();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { data: tokenList, isLoading } =
       useTokenByNetwork(networkSearchParams);
+    const { searchHistory, addSearchResult } = useUserBehaviour();
+
+    const handleClickTokenAsset = (token: TokenInfo) => {
+      addSearchResult({
+        result: token,
+        type,
+      });
+    };
 
     useEffect(() => {
       onChangeOpenState(isOpen);
@@ -102,6 +170,23 @@ const TokenSelectModal = forwardRef<HTMLButtonElement, Props>(
                   </div>
                   <div className={"flex flex-col"}>
                     <div
+                      className={cn([
+                        "flex items-center gap-2 text-neutral2 font-medium pt-3 px-4 pb-1",
+                        !searchHistory[type]?.length && "hidden",
+                      ])}
+                    >
+                      <Icons.time />
+                      <p>{dict?.tokenSelectModal.recent}</p>
+                    </div>
+                    {searchHistory[type]?.map((token) => (
+                      <TokenWithNetworkSpecButton
+                        token={token}
+                        networkSearchParams={networkSearchParams}
+                        onClick={handleClickTokenAsset}
+                        key={token.chainId + token.symbol}
+                      />
+                    ))}
+                    <div
                       className={
                         "flex items-center gap-2 text-neutral2 font-medium pt-3 px-4 pb-1"
                       }
@@ -110,54 +195,12 @@ const TokenSelectModal = forwardRef<HTMLButtonElement, Props>(
                       <p>{dict?.tokenSelectModal.dayVolume}</p>
                     </div>
                     {tokenList.map((token) => (
-                      <button
-                        className={
-                          "flex items-center gap-3 px-4 py-3 hover:bg-[rgba(134,134,134,0.05)] text-start"
-                        }
+                      <TokenWithNetworkSpecButton
+                        token={token}
+                        networkSearchParams={networkSearchParams}
+                        onClick={handleClickTokenAsset}
                         key={token.chainId + token.symbol}
-                      >
-                        <div className={"relative size-10"}>
-                          <Avatar
-                            className={"bg-zinc-300"}
-                            src={token.logoURI}
-                          />
-                          {networkSearchParams.chainId &&
-                            networkSearchParams.chainId > 1 && (
-                              <div
-                                className={
-                                  "absolute right-0 bottom-0 size-[18px]"
-                                }
-                              >
-                                {renderNetworkIcon({
-                                  chainId: networkSearchParams.chainId,
-                                  className:
-                                    "size-[18px] rounded-md border border-white",
-                                })}
-                              </div>
-                            )}
-                        </div>
-                        <dl className={"flex flex-col"}>
-                          <dt className={"font-medium"}>{token.name}</dt>
-                          <dd>
-                            <div className={"flex items-center gap-2"}>
-                              <p
-                                className={
-                                  "text-sm text-neutral2 tracking-tight font-medium text-ellipsis w-full max-w-[48px]"
-                                }
-                              >
-                                {token.symbol}
-                              </p>
-                              <p
-                                className={
-                                  "text-sm text-neutral3 text-ellipsis tracking-tight"
-                                }
-                              >
-                                {toHashOmitString(token.address)}
-                              </p>
-                            </div>
-                          </dd>
-                        </dl>
-                      </button>
+                      />
                     ))}
                   </div>
                 </div>

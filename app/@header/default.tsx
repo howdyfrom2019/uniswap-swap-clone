@@ -1,3 +1,4 @@
+import { getDictionary } from "@/app/dictionaries";
 import Header from "@/components/header";
 
 export default async function HeaderLayout({
@@ -5,9 +6,10 @@ export default async function HeaderLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const dict = await getDictionary();
   return (
     <>
-      <Header />
+      <Header initialDict={dict} />
       {children}
     </>
   );

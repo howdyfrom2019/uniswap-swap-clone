@@ -19,7 +19,7 @@ export default function useTokenByNetwork({ chainId, query = "" }: Props) {
     setIsLoading(true);
 
     setTimeout(() => {
-      const tokensInfo = getSupportedTokenByNetwork(chainId ?? undefined);
+      const tokensInfo = getSupportedTokenByNetwork(chainId ?? undefined) ?? [];
       const trimmedQuery = query.trim().toLowerCase();
       const filteredInfo = tokensInfo.filter((token) =>
         token.symbol.toLowerCase().startsWith(trimmedQuery)

@@ -1,17 +1,18 @@
 "use client";
 
 import { dictionaries, Dictionary } from "@/lib/configs/dictionary-config";
+import { LANGUAGE_KEY } from "@/lib/configs/storage-config";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type LangType = "ko-KR" | "en-US";
 
-export function useDictionary() {
+export function useDictionary(initialDict?: Dictionary) {
   const searchParams = useSearchParams();
-  const lngParams = searchParams.get("lng");
-  const [dict, setDict] = useState<Dictionary>();
+  const lngParams = searchParams.get(LANGUAGE_KEY);
   const [lng, setLng] = useState<LangType>("en-US");
+  const [dict, setDict] = useState<Dictionary | null>(initialDict ?? null);
 
   const updateDictionary = async (lang: LangType) => {
     const dict = await dictionaries[lang]();
@@ -19,7 +20,7 @@ export function useDictionary() {
   };
 
   const updateLocale = async () => {
-    const storedLng = localStorage.getItem("locale") as LangType | null;
+    const storedLng = localStorage.getItem(LANGUAGE_KEY) as LangType | null;
 
     if (!storedLng) {
       const { headers } = await axios.get("/", {
@@ -27,7 +28,7 @@ export function useDictionary() {
         headers: { "Cache-Control": "no-cache" },
       });
       const locale = headers["x-locale"] as LangType;
-      localStorage.setItem("lng", locale);
+      localStorage.setItem(LANGUAGE_KEY, locale);
       updateDictionary(locale);
       setLng(locale);
     } else {

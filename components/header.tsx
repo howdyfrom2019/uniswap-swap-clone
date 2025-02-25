@@ -1,36 +1,39 @@
-import { getDictionary } from "@/app/dictionaries";
+"use client";
+
 import DesktopSearch from "@/components/desktop-search";
 import { Icons } from "@/components/icons";
+import { useDictionary } from "@/hooks/use-dictionary";
+import { Dictionary } from "@/lib/configs/dictionary-config";
 import { cn } from "@/lib/utils/tailwind-util";
 import { Button, Tooltip } from "@heroui/react";
 import Link from "next/link";
 
-export default async function Header() {
-  const dict = await getDictionary();
+export default function Header({ initialDict }: { initialDict?: Dictionary }) {
+  const { dict } = useDictionary(initialDict);
 
   const NAVIGATION_MENU = [
     {
-      label: dict.header.nav.trade.label,
+      label: dict?.header.nav.trade.label,
       children: [
-        { label: dict.header.nav.trade.swap, icon: null },
-        { label: dict.header.nav.trade.limit, icon: null },
-        { label: dict.header.nav.trade.send, icon: null },
-        { label: dict.header.nav.trade.buy, icon: null },
+        { label: dict?.header.nav.trade.swap, icon: null },
+        { label: dict?.header.nav.trade.limit, icon: null },
+        { label: dict?.header.nav.trade.send, icon: null },
+        { label: dict?.header.nav.trade.buy, icon: null },
       ],
     },
     {
-      label: dict.header.nav.explore.label,
+      label: dict?.header.nav.explore.label,
       children: [
-        { label: dict.header.nav.explore.token, icon: null },
-        { label: dict.header.nav.explore.pool, icon: null },
-        { label: dict.header.nav.explore.transaction, icon: null },
+        { label: dict?.header.nav.explore.token, icon: null },
+        { label: dict?.header.nav.explore.pool, icon: null },
+        { label: dict?.header.nav.explore.transaction, icon: null },
       ],
     },
     {
-      label: dict.header.nav.pool.label,
+      label: dict?.header.nav.pool.label,
       children: [
-        { label: dict.header.nav.pool.view, icon: null },
-        { label: dict.header.nav.pool.create, icon: null },
+        { label: dict?.header.nav.pool.view, icon: null },
+        { label: dict?.header.nav.pool.create, icon: null },
       ],
     },
   ];
@@ -67,7 +70,7 @@ export default async function Header() {
             <span
               className={cn([
                 "text-neutral2 hover:text-neutral2 mx-2",
-                menu.label === dict.header.nav.trade.label &&
+                menu.label === dict?.header.nav.trade.label &&
                   "text-neutral1 hover:text-neutral2",
               ])}
               role={"button"}
@@ -93,7 +96,7 @@ export default async function Header() {
           }
           color={"secondary"}
         >
-          {dict.header.nav.connect}
+          {dict?.header.nav.connect}
         </Button>
       </div>
     </header>

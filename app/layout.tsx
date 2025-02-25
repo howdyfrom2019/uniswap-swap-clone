@@ -49,8 +49,11 @@ export default function RootLayout({
         <Providers>
           {header}
           {children}
+          {/* <div id="token-select-portal-container" /> */}
         </Providers>
       </body>
     </html>
   );
 }
+
+// export const dynamic = "force-dynamic";

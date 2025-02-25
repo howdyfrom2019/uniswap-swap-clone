@@ -26,7 +26,7 @@ export default function SwapForm() {
             <Link
               href={"#"}
               className={cn([
-                "flex items-stretch py-1 w-fit px-3 rounded-full text-center font-semibold text-neutral2 hover:text-neutral1",
+                "text-sm flex items-stretch py-1 w-fit px-3 rounded-full text-center font-bold text-neutral2 hover:text-neutral1",
                 header.href === "/swap" &&
                   "bg-[rgba(34,34,34,0.05)] text-neutral1 hover:text-neutral1-hover hover:bg-[rgba(34,34,34,0.09)]",
               ])}
