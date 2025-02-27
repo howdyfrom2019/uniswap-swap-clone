@@ -1,6 +1,6 @@
 "use client";
 
-import { dictionaries, Dictionary } from "@/lib/configs/dictionary-config";
+import { dictionaries, type Dictionary } from "@/lib/configs/dictionary-config";
 import { LANGUAGE_KEY } from "@/lib/configs/storage-config";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";

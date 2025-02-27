@@ -15,6 +15,7 @@
   "moreDetail": "Learn more",
   "showDetail": "Show more",
   "hideDetail": "Show less",
+  "auto": "Auto",
   "networkFee": {
     "label": "Network cost",
     "desc": "This is the cost to process your transaction on the blockchain. Uniswap does not receive any share of these fees."
@@ -129,6 +130,10 @@
         "v4": "v4 pools",
         "v3": "v3 pools",
         "v2": "v2 pools"
+      },
+      "uniswapX": {
+        "label": "UniswapX",
+        "desc": "UniswapX aggregates liquidity sources for better prices and gas free swaps."
       }
     }
   }

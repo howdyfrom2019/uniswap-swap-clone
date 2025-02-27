@@ -15,6 +15,7 @@
   "moreDetail": "더 알아보기",
   "showDetail": "자세히보기",
   "hideDetail": "간략히보기",
+  "auto": "자동",
   "networkFee": {
     "label": "네트워크 비용",
     "desc": "이는 블록체인에서  트랜잭션을 처리하는 데 드는 비용입니다. Uniswap은 이러한 수수료의 일부를 받지 않습니다."
@@ -129,6 +130,10 @@
         "v4": "v4 풀",
         "v3": "v3 풀",
         "v2": "v2 풀"
+      },
+      "uniswapX": {
+        "label": "UniswapX",
+        "desc": "UniswapX는 더 나은 가격과 가스 프리 스왑을 위해 유동성 소스를 통합합니다."
       }
     }
   }

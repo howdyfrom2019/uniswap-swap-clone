@@ -231,3 +231,8 @@ export const SUPPORTED_CHAINS_WITH_ALL_NETWORK: {
     label: v.name,
   })),
 ];
+
+export const EXTERNAL_LINKS = {
+  uniswapX:
+    "https://support.uniswap.org/hc/en-us/articles/17544708791821-Are-there-network-costs-for-UniswapX",
+};

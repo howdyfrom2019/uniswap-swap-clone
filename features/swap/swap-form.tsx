@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils/tailwind-util";
 import { Button } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -34,11 +35,23 @@ const schema = z.object({
   fromAmount: z.coerce.number(),
   toAmount: z.coerce.number(),
   isUpperFocus: z.boolean(),
+  config: z.object({
+    maxSlippage: z.coerce.number().optional(),
+    maxTxPeriod: z.coerce.number(),
+    tradeOption: z.object({
+      default: z.boolean(),
+      x: z.boolean(),
+      v2: z.boolean(),
+      v3: z.boolean(),
+      v4: z.boolean(),
+    }),
+  }),
 });
 
 type FormData = z.infer<typeof schema>;
 
 export default function SwapForm() {
+  const [isOpenConfigPopover, setIsOpenConfigPopover] = useState(false);
   const form = useForm<FormData>({
     defaultValues: {
       fromToken: {
@@ -46,6 +59,16 @@ export default function SwapForm() {
         chainId: 1,
       },
       isUpperFocus: true,
+      config: {
+        maxTxPeriod: 30,
+        tradeOption: {
+          default: true,
+          x: true,
+          v2: true,
+          v3: true,
+          v4: true,
+        },
+      },
     },
     resolver: zodResolver(schema),
   });
@@ -117,7 +140,13 @@ export default function SwapForm() {
             </Link>
           ))}
         </div>
-        <SwapConfig />
+        <SwapConfig
+          isOpen={isOpenConfigPopover}
+          onOpenChange={setIsOpenConfigPopover}
+          onChangeConfig={(config) => {
+            form.setValue("config", config);
+          }}
+        />
       </div>
       <form
         className={"flex flex-col items-stretch gap-0.5"}
