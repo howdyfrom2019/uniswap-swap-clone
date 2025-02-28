@@ -1,18 +1,20 @@
 "use client";
 
+import ConnectButton from "@/components/connect-button";
 import { Icons } from "@/components/icons";
 import TokenNetworkInput, {
   TokenNetworkSelectData,
 } from "@/components/token-network-input";
 import SwapConfig from "@/features/swap/swap-config";
 import { useDictionary } from "@/hooks/use-dictionary";
-import { ETH_TOKEN } from "@/lib/configs/uniswap-config";
+import { useAccount, useQuoting } from "@/hooks/wagmi-like/uniswap";
+import { ETH_TOKEN, SupportedTokenType } from "@/lib/configs/uniswap-config";
 import { cn } from "@/lib/utils/tailwind-util";
-import { Button } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDebounce } from "use-debounce";
 import { z } from "zod";
 
 const schema = z.object({
@@ -32,8 +34,8 @@ const schema = z.object({
     name: z.string(),
     symbol: z.string(),
   }),
-  fromAmount: z.coerce.number(),
-  toAmount: z.coerce.number(),
+  fromAmount: z.string(),
+  toAmount: z.string(),
   isUpperFocus: z.boolean(),
   config: z.object({
     maxSlippage: z.coerce.number().optional(),
@@ -51,6 +53,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function SwapForm() {
+  const { isConnected } = useAccount();
   const [isOpenConfigPopover, setIsOpenConfigPopover] = useState(false);
   const form = useForm<FormData>({
     defaultValues: {
@@ -58,6 +61,8 @@ export default function SwapForm() {
         ...ETH_TOKEN,
         chainId: 1,
       },
+      fromAmount: "",
+      toAmount: "",
       isUpperFocus: true,
       config: {
         maxTxPeriod: 30,
@@ -72,16 +77,37 @@ export default function SwapForm() {
     },
     resolver: zodResolver(schema),
   });
+
+  const [debouncedFrom] = useDebounce(form.watch("fromAmount"), 300);
+  const [debouncedTo] = useDebounce(form.watch("toAmount"), 300);
+  const {
+    isOverMaxValue,
+    isSubmitting,
+    toAmount: calculatedToAmount,
+    fromAmount: calculatedFromAmount,
+  } = useQuoting({
+    fromToken: {
+      symbol: form.watch("fromToken.symbol") as SupportedTokenType,
+      address: form.watch("fromToken.address"),
+      decimals: form.watch("fromToken.decimals"),
+      chainId: form.watch("fromToken.chainId"),
+    },
+    toToken: {
+      symbol: form.watch("toToken.symbol") as SupportedTokenType,
+      address: form.watch("toToken.address"),
+      decimals: form.watch("toToken.decimals"),
+      chainId: form.watch("toToken.chainId"),
+    },
+    fromAmount: debouncedFrom,
+    toAmount: debouncedTo,
+  });
+
+  const isDisabledSubmitButton =
+    (isConnected && !form.watch("toToken.chainId")) ||
+    isOverMaxValue ||
+    isSubmitting;
+
   const { dict } = useDictionary();
-  if (!dict) return null;
-
-  const formHeaders = [
-    { label: dict.header.nav.trade.swap, href: "/swap" },
-    { label: dict.header.nav.trade.limit, href: "/limit" },
-    { label: dict.header.nav.trade.send, href: "/send" },
-    { label: dict.header.nav.trade.buy, href: "/buy" },
-  ];
-
   const onSubmit = (formData: FormData) => {};
 
   const switchFromToTicker = () => {
@@ -113,14 +139,35 @@ export default function SwapForm() {
       return;
     }
 
+    console.log(amount, token);
+
     if (token) {
       form.setValue(`${type}Token`, token);
     }
 
-    if (amount) {
-      form.setValue(`${type}Amount`, amount);
+    console.log("yes token changed");
+
+    if (amount !== undefined) {
+      if (type === "from" && !form.watch("toToken.chainId")) return;
+      if (amount === "") {
+        console.log("amount is blank");
+        form.resetField(`${type}Amount`);
+        return;
+      }
+
+      console.log("amount is filled");
+      form.setValue(`${type}Amount`, String(amount));
     }
   };
+
+  if (!dict) return null;
+
+  const formHeaders = [
+    { label: dict.header.nav.trade.swap, href: "/swap" },
+    { label: dict.header.nav.trade.limit, href: "/limit" },
+    { label: dict.header.nav.trade.send, href: "/send" },
+    { label: dict.header.nav.trade.buy, href: "/buy" },
+  ];
 
   return (
     <div className={"flex flex-col items-stretch gap-0.5"}>
@@ -159,7 +206,7 @@ export default function SwapForm() {
             label={dict.sell}
             selectedTokenNetwork={{
               token: form.watch("fromToken"),
-              amount: form.watch("fromAmount"),
+              amount: calculatedFromAmount || form.watch("fromAmount"),
             }}
             onChangeTokenNetwork={(data) => {
               handleOnChangeTokenNetwork("from", data);
@@ -170,6 +217,9 @@ export default function SwapForm() {
                 form.setValue("isUpperFocus", true);
               }
             }}
+            onChange={(e) => {
+              form.setValue("fromAmount", e.target.value);
+            }}
           />
           <TokenNetworkInput
             isFocusing={!Boolean(form.watch("isUpperFocus"))}
@@ -177,7 +227,7 @@ export default function SwapForm() {
             label={dict.buy}
             selectedTokenNetwork={{
               token: form.watch("toToken"),
-              amount: form.watch("toAmount"),
+              amount: calculatedToAmount || form.watch("toAmount"),
             }}
             onChangeTokenNetwork={(data) => {
               handleOnChangeTokenNetwork("to", data);
@@ -187,6 +237,10 @@ export default function SwapForm() {
               if (Boolean(form.watch("toToken").chainId)) {
                 form.setValue("isUpperFocus", false);
               }
+            }}
+            onChange={(e) => {
+              console.log(e.target.value);
+              form.setValue("toAmount", e.target.value);
             }}
           />
           <button
@@ -201,13 +255,23 @@ export default function SwapForm() {
             <Icons.arrowDown />
           </button>
         </div>
-        <Button
+        <ConnectButton
+          isDisabled={isDisabledSubmitButton}
+          usage={"form"}
           color={"secondary"}
           size={"lg"}
-          className={"text-primary font-semibold text-lg mt-1"}
+          className={cn([
+            "text-primary font-semibold text-lg mt-1",
+            "disabled:!bg-[#f9f9f9] disabled:!text-zinc-500 disabled:!opacity-100",
+            isConnected && "text-white",
+          ])}
         >
-          {dict.connectWallet}
-        </Button>
+          {isConnected
+            ? form.watch("toToken.chainId")
+              ? dict?.review
+              : dict?.tokenSelectModal.label
+            : dict?.connectWallet}
+        </ConnectButton>
       </form>
     </div>
   );

@@ -92,8 +92,7 @@ const TokenSelectModal = forwardRef<HTMLButtonElement, Props>(
       });
     const { dict, locale } = useDictionary();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const { data: tokenList, isLoading } =
-      useTokenByNetwork(networkSearchParams);
+    const { data: tokenList } = useTokenByNetwork(networkSearchParams);
     const { searchHistory, addSearchResult } = useUserBehaviour();
     const showQuickMenuSection =
       searchHistory[type]?.filter(

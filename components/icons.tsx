@@ -272,4 +272,43 @@ export const Icons = {
       ></path>
     </svg>
   ),
+  connectedIcon: ({ className, ...props }: ComponentPropsWithoutRef<"svg">) => (
+    <svg
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
+    >
+      <g style={{ transformOrigin: "center center" }}>
+        <circle cx="12" cy="12" fill="#FF89341F" r="12"></circle>
+        <g transform="translate(4, 4) scale(0.3333333333333333)">
+          <path
+            clipRule="evenodd"
+            d="M22.3866 1.13864C22.9265 -0.379548 25.0735 -0.379548 25.6134 1.13864L29.2424 11.3436L39.0246 6.69372C40.4798 6.00196 41.998 7.52015 41.3063 8.97544L36.6564 18.7576L46.8614 22.3866C48.3796 22.9265 48.3796 25.0735 46.8614 25.6134L36.6564 29.2425L41.3063 39.0246C41.998 40.4798 40.4798 41.998 39.0246 41.3063L29.2424 36.6564L25.6134 46.8614C25.0735 48.3796 22.9265 48.3796 22.3866 46.8614L18.7576 36.6564L8.97544 41.3063C7.52015 41.998 6.00196 40.4798 6.69372 39.0246L11.3436 29.2425L1.13864 25.6134C-0.379548 25.0735 -0.379548 22.9265 1.13864 22.3866L11.3436 18.7576L6.69372 8.97544C6.00196 7.52015 7.52015 6.00196 8.97544 6.69372L18.7576 11.3436L22.3866 1.13864Z"
+            fill="#FF8934"
+            fillRule="evenodd"
+          ></path>
+        </g>
+      </g>
+    </svg>
+  ),
+  loaderIcon: ({ className, ...props }: ComponentPropsWithoutRef<"svg">) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      {...props}
+    >
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  ),
 };

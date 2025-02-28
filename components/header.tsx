@@ -1,15 +1,18 @@
 "use client";
 
+import ConnectButton from "@/components/connect-button";
 import DesktopSearch from "@/components/desktop-search";
 import { Icons } from "@/components/icons";
 import { useDictionary } from "@/hooks/use-dictionary";
+import { useAccount } from "@/hooks/wagmi-like/uniswap";
 import { Dictionary } from "@/lib/configs/dictionary-config";
 import { cn } from "@/lib/utils/tailwind-util";
-import { Button, Tooltip } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
 import Link from "next/link";
 
 export default function Header({ initialDict }: { initialDict?: Dictionary }) {
   const { dict } = useDictionary(initialDict);
+  const { isConnected } = useAccount();
 
   const NAVIGATION_MENU = [
     {
@@ -90,14 +93,15 @@ export default function Header({ initialDict }: { initialDict?: Dictionary }) {
         <button className={"p-2 rounded-full hover:bg-neutral-100"}>
           <Icons.moreItems />
         </button>
-        <Button
+        <ConnectButton
+          usage={"header"}
           className={
             "min-w-0 px-3 font-bold text-primary rounded-full hover:bg-[#FCE9FB]"
           }
           color={"secondary"}
         >
-          {dict?.header.nav.connect}
-        </Button>
+          {isConnected ? <Icons.connectedIcon /> : dict?.header.nav.connect}
+        </ConnectButton>
       </div>
     </header>
   );
