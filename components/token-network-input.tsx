@@ -59,7 +59,7 @@ export default function TokenNetworkInput({
       inputRef.current.focus();
     }
 
-    if (selectedTokenNetwork?.amount) {
+    if (selectedTokenNetwork?.amount !== undefined) {
       inputRef.current.value = selectedTokenNetwork.amount;
     }
   }, [isFocusing, inputRef.current, selectedTokenNetwork?.amount]);
@@ -130,7 +130,6 @@ export default function TokenNetworkInput({
               if (!inputRef.current) return;
               onChangeTokenNetwork({
                 token,
-                amount: "",
               });
             }}
             token={selectedTokenNetwork?.token}

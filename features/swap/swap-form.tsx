@@ -14,7 +14,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDebounce } from "use-debounce";
 import { z } from "zod";
 
 const schema = z.object({
@@ -78,8 +77,6 @@ export default function SwapForm() {
     resolver: zodResolver(schema),
   });
 
-  const [debouncedFrom] = useDebounce(form.watch("fromAmount"), 300);
-  const [debouncedTo] = useDebounce(form.watch("toAmount"), 300);
   const {
     isOverMaxValue,
     isSubmitting,
@@ -98,8 +95,8 @@ export default function SwapForm() {
       decimals: form.watch("toToken.decimals"),
       chainId: form.watch("toToken.chainId"),
     },
-    fromAmount: debouncedFrom,
-    toAmount: debouncedTo,
+    fromAmount: form.watch("fromAmount"),
+    toAmount: form.watch("toAmount"),
   });
 
   const isDisabledSubmitButton =
@@ -108,6 +105,7 @@ export default function SwapForm() {
     isSubmitting;
 
   const { dict } = useDictionary();
+
   const onSubmit = (formData: FormData) => {};
 
   const switchFromToTicker = () => {
@@ -266,11 +264,20 @@ export default function SwapForm() {
             isConnected && "text-white",
           ])}
         >
-          {isConnected
-            ? form.watch("toToken.chainId")
-              ? dict?.review
-              : dict?.tokenSelectModal.label
-            : dict?.connectWallet}
+          {isSubmitting ? (
+            <>
+              <Icons.loaderIcon className={"size-4 animate-spin mr-2"} />
+              {dict.quoting}
+            </>
+          ) : isConnected ? (
+            form.watch("toToken.chainId") ? (
+              dict?.review
+            ) : (
+              dict?.tokenSelectModal.label
+            )
+          ) : (
+            dict?.connectWallet
+          )}
         </ConnectButton>
       </form>
     </div>

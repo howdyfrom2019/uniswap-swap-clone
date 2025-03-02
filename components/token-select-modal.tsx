@@ -47,6 +47,7 @@ const TokenWithNetworkSpecButton = ({
       }
       onClick={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         onClick?.(token);
       }}
       key={token.chainId + token.symbol}
@@ -189,7 +190,6 @@ const TokenSelectModal = forwardRef<HTMLButtonElement, Props>(
                       <NetworkPopover
                         chainId={networkSearchParams.chainId}
                         onChangeSelectedChainId={(chainId) => {
-                          console.log(chainId);
                           setNetworkSearchParams((prev) => ({
                             ...prev,
                             chainId,

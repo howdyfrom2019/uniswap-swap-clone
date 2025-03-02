@@ -60,7 +60,7 @@ export default function ConnectButton({
           onPress?.(e);
         }}
         size={props.size}
-        className={cn([props.className, "text-white"])}
+        className={cn(["text-white", props.className])}
         {...props}
       >
         {children}
