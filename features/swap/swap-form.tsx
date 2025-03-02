@@ -12,7 +12,7 @@ import { ETH_TOKEN, SupportedTokenType } from "@/lib/configs/uniswap-config";
 import { cn } from "@/lib/utils/tailwind-util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -52,6 +52,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function SwapForm() {
+  const submitBtnRef = useRef<HTMLButtonElement>(null);
   const { isConnected } = useAccount();
   const [isOpenConfigPopover, setIsOpenConfigPopover] = useState(false);
   const form = useForm<FormData>({
@@ -106,7 +107,10 @@ export default function SwapForm() {
 
   const { dict } = useDictionary();
 
-  const onSubmit = (formData: FormData) => {};
+  const onSubmit = (formData: FormData) => {
+    console.log(calculatedFromAmount, calculatedToAmount);
+    console.log(formData);
+  };
 
   const switchFromToTicker = () => {
     const fromToken = { ...form.watch("fromToken") };
@@ -137,13 +141,9 @@ export default function SwapForm() {
       return;
     }
 
-    console.log(amount, token);
-
     if (token) {
       form.setValue(`${type}Token`, token);
     }
-
-    console.log("yes token changed");
 
     if (amount !== undefined) {
       if (type === "from" && !form.watch("toToken.chainId")) return;
@@ -263,6 +263,11 @@ export default function SwapForm() {
             "disabled:!bg-[#f9f9f9] disabled:!text-zinc-500 disabled:!opacity-100",
             isConnected && "text-white",
           ])}
+          onPress={() => {
+            if (isConnected && (calculatedToAmount || calculatedFromAmount)) {
+              submitBtnRef.current?.click();
+            }
+          }}
         >
           {isSubmitting ? (
             <>
@@ -279,6 +284,12 @@ export default function SwapForm() {
             dict?.connectWallet
           )}
         </ConnectButton>
+        <button
+          disabled={isDisabledSubmitButton}
+          type={"submit"}
+          className={"hidden"}
+          ref={submitBtnRef}
+        />
       </form>
     </div>
   );

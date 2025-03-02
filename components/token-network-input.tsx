@@ -100,7 +100,7 @@ export default function TokenNetworkInput({
               isOverMaxValue && "text-red-500",
               className,
             ])}
-            pattern={"^d*.?d*$"}
+            pattern={"^\\d*\\.?\\d*$"}
             onInput={(e) => {
               if (!numberRegex.test(e.currentTarget.value)) {
                 e.currentTarget.value = e.currentTarget.value.slice(0, -1); // 잘못된 입력 제거
@@ -117,7 +117,9 @@ export default function TokenNetworkInput({
                 ? getFixedTokenUSDPrice({
                     symbol: selectedTokenNetwork.token
                       .symbol as SupportedTokenType,
-                    amount: parseEther(String(selectedTokenNetwork.amount)),
+                    amount: parseEther(
+                      selectedTokenNetwork.amount.replaceAll(",", "")
+                    ),
                   })
                 : "0"}
             </p>
