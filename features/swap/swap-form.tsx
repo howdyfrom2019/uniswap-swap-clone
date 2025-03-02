@@ -84,6 +84,7 @@ export default function SwapForm() {
   const { swap } = useSwap({
     onSuccess: (data) => {
       console.log(data);
+      form.reset();
     },
     onError: (error) => console.log(error),
   });
@@ -119,9 +120,6 @@ export default function SwapForm() {
   const { dict } = useDictionary();
 
   const onSubmit = (formData: SwapFormData) => {
-    console.log(calculatedFromAmount, calculatedToAmount);
-    console.log(formData);
-
     const isToAutocompleted = calculatedToAmount !== formData.toAmount;
     setConfirmModal(
       <SwapConfirmModal
@@ -199,12 +197,10 @@ export default function SwapForm() {
     if (amount !== undefined) {
       if (type === "from" && !form.watch("toToken.chainId")) return;
       if (amount === "") {
-        console.log("amount is blank");
         form.resetField(`${type}Amount`);
         return;
       }
 
-      console.log("amount is filled");
       form.setValue(`${type}Amount`, String(amount));
     }
   };
@@ -288,7 +284,6 @@ export default function SwapForm() {
               }
             }}
             onChange={(e) => {
-              console.log(e.target.value);
               form.setValue("toAmount", e.target.value);
             }}
           />
