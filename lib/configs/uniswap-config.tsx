@@ -128,7 +128,18 @@ export const SUPPORTED_CHAINS_WITH_ALL_NETWORK: {
 export const EXTERNAL_LINKS = {
   uniswapX:
     "https://support.uniswap.org/hc/en-us/articles/17544708791821-Are-there-network-costs-for-UniswapX",
+  feeRate:
+    "https://support.uniswap.org/hc/en-us/articles/20131678274957-What-are-Uniswap-Labs-fees",
+  networkFee:
+    "https://support.uniswap.org/hc/en-us/articles/8370337377805-What-is-a-network-cost",
+  orderRouting:
+    "https://support.uniswap.org/hc/en-us/articles/27362707722637-How-to-change-default-trade-options",
+  priceImpact:
+    "https://support.uniswap.org/hc/en-us/articles/8671539602317-What-is-price-impact",
 };
+
+// 가스비 트래킹을 위함. 상호작용 x
+export const UNISWAP_ROUTER_V4 = "0x66a9893cC07D91D95644AEDD05D03f95e1dBA8Af";
 
 // 지갑 연결 없이 테스트 목적으로 사용.
 const privateKey = generatePrivateKey();

@@ -23,14 +23,16 @@ export default function useSwap({
   const swap = async ({
     from,
     to,
-    amount,
+    fromAmount,
+    toAmount,
   }: {
     from: SupportedTokenType;
     to: SupportedTokenType;
-    amount: bigint;
+    fromAmount: bigint;
+    toAmount: bigint;
   }) => {
     try {
-      const notEnoughBalance = balances[from] <= amount;
+      const notEnoughBalance = balances[from] <= fromAmount;
       if (notEnoughBalance) {
         throw InsufficientFundsError;
       }
@@ -38,8 +40,8 @@ export default function useSwap({
       setPair({ from, to });
       setBalances((prev) => ({
         ...prev,
-        [from]: prev[from] - amount,
-        [to]: prev[to] + amount,
+        [from]: prev[from] - fromAmount,
+        [to]: prev[to] + toAmount,
       }));
     } catch (error) {
       onError?.(error);

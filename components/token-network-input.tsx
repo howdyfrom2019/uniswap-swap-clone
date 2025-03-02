@@ -47,11 +47,12 @@ export default function TokenNetworkInput({
   const hasDefaultValue = selectedTokenNetwork?.token?.symbol;
   const inputRef = useRef<HTMLInputElement>(null);
   const isOverMaxValue = useMemo(() => {
+    if (schemaType === "to") return false;
     if (!selectedTokenNetwork?.amount) return false;
 
     const max = decimals ? Number(formatUnits(value, decimals)) : Infinity;
     return Number(selectedTokenNetwork.amount) >= max;
-  }, [value, decimals, selectedTokenNetwork?.amount]);
+  }, [schemaType, value, decimals, selectedTokenNetwork?.amount]);
 
   useEffect(() => {
     if (!inputRef.current) return;

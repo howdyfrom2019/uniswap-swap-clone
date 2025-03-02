@@ -2,18 +2,21 @@
 
 import ConnectButton from "@/components/connect-button";
 import { Icons } from "@/components/icons";
+import NetworkFeeAccordion from "@/components/network-fee-accordion";
 import TokenNetworkInput, {
   TokenNetworkSelectData,
 } from "@/components/token-network-input";
 import SwapConfig from "@/features/swap/swap-config";
+import SwapConfirmModal from "@/features/swap/swap-confirm-modal";
 import { useDictionary } from "@/hooks/use-dictionary";
-import { useAccount, useQuoting } from "@/hooks/wagmi-like/uniswap";
+import { useAccount, useQuoting, useSwap } from "@/hooks/wagmi-like/uniswap";
 import { ETH_TOKEN, SupportedTokenType } from "@/lib/configs/uniswap-config";
 import { cn } from "@/lib/utils/tailwind-util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { JSX, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { parseUnits } from "viem";
 import { z } from "zod";
 
 const schema = z.object({
@@ -49,13 +52,14 @@ const schema = z.object({
   }),
 });
 
-type FormData = z.infer<typeof schema>;
+export type SwapFormData = z.infer<typeof schema>;
 
 export default function SwapForm() {
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const { isConnected } = useAccount();
+  const [confirmModal, setConfirmModal] = useState<JSX.Element>();
   const [isOpenConfigPopover, setIsOpenConfigPopover] = useState(false);
-  const form = useForm<FormData>({
+  const form = useForm<SwapFormData>({
     defaultValues: {
       fromToken: {
         ...ETH_TOKEN,
@@ -77,10 +81,17 @@ export default function SwapForm() {
     },
     resolver: zodResolver(schema),
   });
+  const { swap } = useSwap({
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => console.log(error),
+  });
 
   const {
     isOverMaxValue,
     isSubmitting,
+    ratio,
     toAmount: calculatedToAmount,
     fromAmount: calculatedFromAmount,
   } = useQuoting({
@@ -107,9 +118,49 @@ export default function SwapForm() {
 
   const { dict } = useDictionary();
 
-  const onSubmit = (formData: FormData) => {
+  const onSubmit = (formData: SwapFormData) => {
     console.log(calculatedFromAmount, calculatedToAmount);
     console.log(formData);
+
+    const isToAutocompleted = calculatedToAmount !== formData.toAmount;
+    setConfirmModal(
+      <SwapConfirmModal
+        ratio={ratio}
+        handleSwapAction={() => {
+          swap({
+            from: formData.fromToken.symbol as SupportedTokenType,
+            to: formData.toToken.symbol as SupportedTokenType,
+            fromAmount: isToAutocompleted
+              ? parseUnits(
+                  formData.fromAmount.replaceAll(",", ""),
+                  formData.fromToken.decimals
+                )
+              : parseUnits(
+                  calculatedFromAmount!.replaceAll(",", ""),
+                  formData.fromToken.decimals
+                ),
+            toAmount: isToAutocompleted
+              ? parseUnits(
+                  formData.toAmount.replaceAll(",", ""),
+                  formData.toToken.decimals
+                )
+              : parseUnits(
+                  calculatedToAmount!.replaceAll(",", ""),
+                  formData.toToken.decimals
+                ),
+          });
+        }}
+        formState={{
+          fromToken: formData.fromToken,
+          toToken: formData.toToken,
+          fromAmount: isToAutocompleted
+            ? formData.fromAmount
+            : calculatedFromAmount!,
+          toAmount: isToAutocompleted ? calculatedToAmount! : formData.toAmount,
+          config: formData.config,
+        }}
+      />
+    );
   };
 
   const switchFromToTicker = () => {
@@ -168,7 +219,7 @@ export default function SwapForm() {
   ];
 
   return (
-    <div className={"flex flex-col items-stretch gap-0.5"}>
+    <div className={"flex flex-col items-stretch gap-0.5 relative"}>
       <div className={"flex items-center gap-5 justify-between"}>
         <div className={"flex items-center gap-3 p-1"}>
           {formHeaders.map((header) => (
@@ -284,6 +335,7 @@ export default function SwapForm() {
             dict?.connectWallet
           )}
         </ConnectButton>
+        {confirmModal}
         <button
           disabled={isDisabledSubmitButton}
           type={"submit"}
@@ -291,6 +343,15 @@ export default function SwapForm() {
           ref={submitBtnRef}
         />
       </form>
+      <NetworkFeeAccordion
+        type={"accordion"}
+        className={cn([!ratio && "hidden"])}
+        fromTicker={form.watch("fromToken.symbol") as SupportedTokenType}
+        toTicker={form.watch("toToken.symbol") as SupportedTokenType}
+        fromToRatio={ratio}
+        totalVolume={form.watch("fromAmount")}
+        maxSlippage={form.watch("config.maxSlippage")}
+      />
     </div>
   );
 }

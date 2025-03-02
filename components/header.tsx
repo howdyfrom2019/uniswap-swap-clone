@@ -52,7 +52,7 @@ export default function Header({ initialDict }: { initialDict?: Dictionary }) {
         </button>
         {NAVIGATION_MENU.map((menu) => (
           <Tooltip
-            dir={"bottom"}
+            placement={"bottom"}
             content={
               <ul className={"list-none flex flex-col gap-1 w-40"}>
                 {menu.children.map((el) => (

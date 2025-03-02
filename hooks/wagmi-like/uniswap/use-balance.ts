@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  SUPPORTED_TOKENS,
-  SupportedTokenType,
-} from "@/lib/configs/uniswap-config";
+import { SupportedTokenType } from "@/lib/configs/uniswap-config";
 import { getSupportedTokenByNetwork } from "@/lib/utils/uniswap-util";
 import { balanceAtom } from "@/store/crypto-account";
 import { useAtomValue } from "jotai";
@@ -23,14 +20,12 @@ export default function useBalance({
   const targetToken = supportedTokens.find(
     (token) => token.address === address && token.chainId === chainId
   );
-  const symbol = (SUPPORTED_TOKENS.find(
-    (token) => token === targetToken?.symbol
-  ) ?? "ETH") as SupportedTokenType;
+  const symbol = targetToken?.symbol ?? ("ETH" as SupportedTokenType);
 
   return {
     decimals: targetToken?.decimals,
     symbol,
-    formatted: formatUnits(balances[symbol], 18),
+    formatted: formatUnits(balances[symbol], targetToken?.decimals ?? 18),
     value: balances[symbol],
   };
 }

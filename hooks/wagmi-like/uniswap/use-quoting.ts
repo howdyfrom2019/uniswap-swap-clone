@@ -84,9 +84,8 @@ export default function useQuoting({
 
     if (hasMeaningfulChange) {
       calculateRatio();
-    } else {
-      debouncedFetchRatio(10000);
     }
+    // debouncedFetchRatio(10000);
   }, [fromAmount, toAmount, ratio]);
 
   useEffect(() => {
