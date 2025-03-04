@@ -2,6 +2,7 @@
   "name": "uniswap-swap-clone",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://uniswap-swap-clone.vercel.app",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
