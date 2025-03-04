@@ -1,5 +1,5 @@
-import { getDictionary } from "@/app/dictionaries";
 import Header from "@/components/header";
+import { getDictionary } from "@/app/dictionaries";
 
 export default async function HeaderLayout({
   children,

@@ -1,6 +1,7 @@
 import { Providers } from "@/providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,9 +48,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          {header}
-          {children}
-          {/* <div id="token-select-portal-container" /> */}
+          <Suspense fallback={<div>loading....</div>}>
+            {header}
+            {children}
+          </Suspense>
         </Providers>
       </body>
     </html>
