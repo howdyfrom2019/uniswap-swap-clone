@@ -2,7 +2,7 @@ import {
   FIXED_TOKEN_PRICE,
   SupportedTokenType,
 } from "@/lib/configs/uniswap-config";
-import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 
 export function convertToUSD({
   symbol,

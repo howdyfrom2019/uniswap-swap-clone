@@ -3,7 +3,7 @@ import {
   FIXED_TOKEN_PRICE,
   type SupportedTokenType,
 } from "@/lib/configs/uniswap-config";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { act, useCallback, useEffect, useMemo, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { formatUnits } from "viem";
 
@@ -51,13 +51,15 @@ export default function useQuoting({
       const fromUSDPrice = FIXED_TOKEN_PRICE[fromToken.symbol];
       const toUSDPrice = FIXED_TOKEN_PRICE[toToken.symbol];
 
-      setTimeout(() => {
-        const newRatio = fromUSDPrice / toUSDPrice;
-        setRatio((prevRatio) =>
-          prevRatio !== newRatio ? newRatio : prevRatio
-        );
-        setIsSubmitting(false);
-      }, (ms = 1000));
+      act(() => {
+        setTimeout(() => {
+          const newRatio = fromUSDPrice / toUSDPrice;
+          setRatio((prevRatio) =>
+            prevRatio !== newRatio ? newRatio : prevRatio
+          );
+          setIsSubmitting(false);
+        }, (ms = 1000));
+      });
     },
     [fromToken.symbol, toToken.symbol]
   );
@@ -85,7 +87,7 @@ export default function useQuoting({
     if (hasMeaningfulChange) {
       calculateRatio();
     }
-    // debouncedFetchRatio(10000);
+    debouncedFetchRatio(10000);
   }, [fromAmount, toAmount, ratio]);
 
   useEffect(() => {

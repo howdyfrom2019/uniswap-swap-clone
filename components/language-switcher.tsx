@@ -2,10 +2,9 @@
 
 import { useDictionary } from "@/hooks/use-dictionary";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function LanguageSwitcher() {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { locale, dict } = useDictionary();

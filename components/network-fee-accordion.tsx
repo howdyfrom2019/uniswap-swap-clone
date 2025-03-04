@@ -223,9 +223,12 @@ export default function NetworkFeeAccordion({
               </dt>
               <dd className={"text-xs font-medium text-neutral1"}>
                 {ratioTitle}
-                {` (US${FIXED_TOKEN_PRICE[fromTicker!].toLocaleString("en-US", {
-                  maximumFractionDigits: 2,
-                })})`}
+                {` (US${FIXED_TOKEN_PRICE[fromTicker ?? "ETH"].toLocaleString(
+                  "en-US",
+                  {
+                    maximumFractionDigits: 2,
+                  }
+                )})`}
               </dd>
             </div>
             <div className={"flex items-center justify-between gap-3"}>
